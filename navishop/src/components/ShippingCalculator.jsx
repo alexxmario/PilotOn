@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Truck, Package, Clock, Calculator } from 'lucide-react';
 import apiService from '../services/api';
 
@@ -18,9 +18,9 @@ const ShippingCalculator = ({
     if (shippingAddress?.city && shippingAddress?.county) {
       calculateShipping();
     }
-  }, [shippingAddress?.city, shippingAddress?.county, cartWeight]);
+  }, [shippingAddress?.city, shippingAddress?.county, cartWeight, calculateShipping]);
 
-  const calculateShipping = async () => {
+  const calculateShipping = useCallback(async () => {
     if (!shippingAddress?.city || !shippingAddress?.county) {
       return;
     }
@@ -67,9 +67,9 @@ const ShippingCalculator = ({
     } finally {
       setLoading(false);
     }
-  };
+  }, [shippingAddress, cartWeight, onShippingUpdate, calculateBasicShipping]);
 
-  const calculateBasicShipping = () => {
+  const calculateBasicShipping = useCallback(() => {
     // Basic shipping calculation (free over 500 RON, otherwise 25 RON)
     const basePrice = 25;
     return {
@@ -80,7 +80,7 @@ const ShippingCalculator = ({
       cost: basePrice,
       service: 'Standard'
     };
-  };
+  }, []);
 
   const handleShippingSelect = (option) => {
     setSelectedShipping(option);

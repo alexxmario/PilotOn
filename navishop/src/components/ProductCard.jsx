@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { Star, Heart, ShoppingCart } from 'lucide-react';
 import { useCart } from '../CartContext';
@@ -6,7 +6,6 @@ import { useAuth } from '../AuthContext';
 
 const ProductCard = ({ product, viewMode = 'grid', className = '' }) => {
   const { addToCart } = useCart();
-  const { isAuthenticated } = useAuth();
   const [reviewStats, setReviewStats] = useState({
     totalReviews: 0,
     averageRating: 0
@@ -15,9 +14,9 @@ const ProductCard = ({ product, viewMode = 'grid', className = '' }) => {
 
   useEffect(() => {
     fetchReviewStats();
-  }, [product._id]);
+  }, [fetchReviewStats]);
 
-  const fetchReviewStats = async () => {
+  const fetchReviewStats = useCallback(async () => {
     try {
       const response = await fetch(`http://localhost:5001/api/reviews/stats/${product._id}`);
       if (response.ok) {
@@ -29,7 +28,7 @@ const ProductCard = ({ product, viewMode = 'grid', className = '' }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [product._id]);
 
   const handleAddToCart = async (e) => {
     e.preventDefault();

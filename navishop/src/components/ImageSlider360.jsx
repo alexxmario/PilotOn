@@ -99,23 +99,6 @@ const ImageSlider360 = ({ images = [], productName = 'Product' }) => {
     setIsAutoRotating(false);
   };
 
-  const toggleAutoRotate = () => {
-    setIsAutoRotating(!isAutoRotating);
-  };
-
-  const rotateLeft = () => {
-    setCurrentIndex((prev) => (prev - 1 + currentImages.length) % currentImages.length);
-    setIsAutoRotating(false);
-  };
-
-  const rotateRight = () => {
-    setCurrentIndex((prev) => (prev + 1) % currentImages.length);
-    setIsAutoRotating(false);
-  };
-
-  const toggleFullscreen = () => {
-    setIsFullscreen(!isFullscreen);
-  };
 
   if (!currentImages || currentImages.length === 0) {
     return (

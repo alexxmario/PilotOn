@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import ReviewCard from './ReviewCard';
 import ReviewForm from './ReviewForm';
 import { useAuth } from '../AuthContext';
-import { Star, Filter, ChevronDown, MessageSquare, TrendingUp } from 'lucide-react';
+import { Star, Filter, ChevronDown, MessageSquare } from 'lucide-react';
 
 const ReviewsList = ({ productId, onReviewUpdate }) => {
   const { isAuthenticated, getToken } = useAuth();
@@ -29,9 +29,9 @@ const ReviewsList = ({ productId, onReviewUpdate }) => {
   useEffect(() => {
     fetchReviews();
     fetchStats();
-  }, [productId, currentPage, sortBy]);
+  }, [productId, currentPage, sortBy, fetchReviews, fetchStats]);
 
-  const fetchReviews = async () => {
+  const fetchReviews = useCallback(async () => {
     try {
       const response = await fetch(
         `http://localhost:5001/api/reviews/product/${productId}?page=${currentPage}&sort=${sortBy}`,
@@ -53,9 +53,9 @@ const ReviewsList = ({ productId, onReviewUpdate }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [productId, currentPage, sortBy]);
 
-  const fetchStats = async () => {
+  const fetchStats = useCallback(async () => {
     try {
       const response = await fetch(`http://localhost:5001/api/reviews/stats/${productId}`);
       if (!response.ok) throw new Error('Failed to fetch stats');
@@ -64,7 +64,7 @@ const ReviewsList = ({ productId, onReviewUpdate }) => {
     } catch (err) {
       console.error('Error fetching stats:', err);
     }
-  };
+  }, [productId]);
 
   const handleSubmitReview = async (reviewData) => {
     if (!isAuthenticated()) {
